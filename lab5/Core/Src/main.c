@@ -72,65 +72,54 @@ static void MX_TIM2_Init(void);
   char str[50];
 
   void command_parser_fsm(){
-	  switch(state){
-	  case INIT:
-		  //ignore this section
-		  HAL_GPIO_WritePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin, RESET);
-		  HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, SET);
-		  HAL_GPIO_WritePin(LED_YELLOW_GPIO_Port, LED_YELLOW_Pin, SET);
+		  switch(state){
+		  case INIT:
 
-		  if(temp=='!') state=START;
-		  break;
-	  case START:
-//		  HAL_GPIO_WritePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin, SET);
-//		  HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, RESET);
-//		  HAL_GPIO_WritePin(LED_YELLOW_GPIO_Port, LED_YELLOW_Pin, SET);
-		  if(temp=='O') state=S0;
-		  else if(temp=='R') state=S2;
-		  else state=INIT;
-		  break;
-	  case S0:
-//		  HAL_GPIO_WritePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin, SET);
-//		  HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, RESET);
-//		  HAL_GPIO_WritePin(LED_YELLOW_GPIO_Port, LED_YELLOW_Pin, SET);
-		  if(temp=='K') state=S1;
-		  else state=INIT;
-		  break;
-	  case S1:
-//		  HAL_GPIO_WritePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin, RESET);
-//		  HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, SET);
-//		  HAL_GPIO_WritePin(LED_YELLOW_GPIO_Port, LED_YELLOW_Pin, SET);
-		  if(temp!='#') {
-			  state=INIT;
+
+			  if(temp=='!') state=START;
+			  break;
+		  case START:
+
+			  if(temp=='O') state=S0;
+			  else if(temp=='R') state=S2;
+			  else state=INIT;
+			  break;
+		  case S0:
+
+			  if(temp=='K') state=S1;
+			  else state=INIT;
+			  break;
+		  case S1:
+
+			  if(temp!='#') {
+				  state=INIT;
+
+			  }
+			  else {
+				  command_flag=-1;
+				  state=INIT;
+			  }
+			  break;
+		  case S2:
+
+			  if(temp=='S') state=S3;
+			  else state=INIT;
+			  break;
+		  case S3:
+
+			  if(temp=='T') state=S4;
+			  else state=INIT;
+			  break;
+		  case S4:
+			  if(temp=='#') {
+				  command_flag=0;
+				  state=INIT;
+			  }
+			  else state=INIT;
+			  break;
+
 
 		  }
-		  else {
-			  command_flag=-1;
-			  state=INIT;
-		  }
-		  break;
-	  case S2:
-
-		  if(temp=='S') state=S3;
-		  else state=INIT;
-		  break;
-	  case S3:
-//		  HAL_GPIO_WritePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin, RESET);
-//		  HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, RESET);
-//		  HAL_GPIO_WritePin(LED_YELLOW_GPIO_Port, LED_YELLOW_Pin, SET);
-		  if(temp=='T') state=S4;
-		  else state=INIT;
-		  break;
-	  case S4:
-		  if(temp=='#') {
-			  command_flag=0;
-			  state=INIT;
-		  }
-		  else state=INIT;
-		  break;
-
-
-	  }
   }
   void uart_communication_fsm(){
 	  switch (command_flag){
